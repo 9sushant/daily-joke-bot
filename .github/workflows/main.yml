@@ -1,0 +1,40 @@
+name: Update README with new joke
+
+on:
+  # This runs the workflow on a schedule (every day at 8:00 AM UTC)
+  schedule:
+    - cron: '0 8 * * *'
+
+  # This allows you to run the workflow manually from the Actions tab
+  workflow_dispatch:
+
+jobs:
+  update_joke:
+    runs-on: ubuntu-latest
+    steps:
+      # Step 1: Check out your repository code
+      - name: Check out repo
+        uses: actions/checkout@v4
+
+      # Step 2: Set up Python environment
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      # Step 3: Install Python dependencies from requirements.txt
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      # Step 4: Run the Python script to fetch joke and update README
+      - name: Run joke updater
+        run: python get_joke.py
+
+      # Step 5: Commit the updated README.md file
+      - name: Commit and push if README changed
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "feat: Update daily joke"
+          file_pattern: README.md
