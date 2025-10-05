@@ -25,7 +25,7 @@ jobs:
         uses: actions/checkout@v4
 
       # This is the step that contains your email address in its name
-      - name: 'Run a simple script - 23f2002900@ds.study.iitm.ac.in'
+      - name: '23f2002900@ds.study.iitm.ac.in'
         run: echo "Hello, world! This step is uniquely named."
 
       - name: 'Show current directory'
