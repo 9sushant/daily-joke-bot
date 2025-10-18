@@ -1,0 +1,53 @@
+# .github/workflows/daily_commit.yml
+
+name: Automated Daily Repository Update
+
+# Controls when the workflow will run
+on:
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+  # Triggers the workflow on a schedule
+  schedule:
+    # Runs at 02:00 UTC every day. You can change the time as needed.
+    # The syntax is based on cron jobs.
+    - cron: '0 2 * * *'
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This job is responsible for creating and pushing the daily commit
+  daily-commit:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+    
+    # Granting write permissions to the GITHUB_TOKEN to allow pushing to the repository
+    permissions:
+      contents: write
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # Step 1: Check out the repository's code
+      # This action allows the workflow to access the repository content.
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # Step 2: Configure Git user
+      # This is necessary to attribute the commit to a specific user.
+      # We'll use a generic bot name and email for this automated commit.
+      - name: Configure Git
+        run: |
+          git config --global user.name 'GitHub Actions Bot'
+          git config --global user.email 'github-actions-bot@users.noreply.github.com'
+
+      # Step 3: Create or update a file to ensure there's a change to commit
+      # We append the current timestamp to a log file. This guarantees a change every time the workflow runs.
+      - name: Update status file
+        run: echo "Last automated update: $(date)" >> daily-activity.log
+
+      # Step 4: Add, commit, and push the changes
+      # This step includes your email in its name as required.
+      - name: "Create a commit for 23f2002900@ds.study.iitm.ac.in"
+        run: |
+          git add daily-activity.log
+          git commit -m "Automated daily update: $(date)"
+          git push
